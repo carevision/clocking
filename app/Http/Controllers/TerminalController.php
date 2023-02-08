@@ -66,9 +66,10 @@ class TerminalController extends Controller
             // TODO fix company id from settings
             if (!$setting instanceof Settings) {
                 $company_id = session('company_id', 8);
+                $apiUrl = config("server.url");
                 $setting = Settings::create([
                     "device_ip"     => $validated['device_ip'],
-                    "api_url"       => 'https://atif.care-vision.co.uk/api/v2/storeClocking',
+                    "api_url"       => $apiUrl,
                     "company_id"    => !empty($company_id) ? $company_id : 8,
                     "device_model"  => $validated['device_model'],
                     "serial_number" => $serialNumber
