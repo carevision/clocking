@@ -58,6 +58,7 @@ class BackUpService extends Command
             if ($responseCode !== 200) {
                 $this->info("Failed to establish the connection with server.");
                 Log::error("Failed to push database on Server");
+
             } else {
                 $this->info(" Database uploaded successfully ...");
             }

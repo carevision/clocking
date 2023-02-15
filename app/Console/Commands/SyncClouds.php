@@ -148,10 +148,12 @@ class SyncClouds extends Command
                     Log::error($e->getMessage());
                     $this->info("exception Occurred : ...........");
                     $this->info($e->getMessage());
+                    app('sentry')->captureException($e);
                 } catch (JsonException $e) {
                     $this->info("exception Occurred : ...........");
                     $this->info($e->getMessage());
                     Log::error($e->getMessage());
+                    app('sentry')->captureException($e);
                 }
             }
 
