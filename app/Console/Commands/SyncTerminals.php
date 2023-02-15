@@ -76,7 +76,7 @@ class SyncTerminals extends Command
                 }
 
                 if (empty($serialNumber)){
-                    $errors[] = "unable to connect to machine on this IP: ".$deviceIp;
+                    $errors[] = "unable to connect to machine on this IP: ".$deviceIp.", company id:".$companyId;
                     $this->info("Machine must have a serial number fetched.");
                     $this->reportToServerOnFailure($deviceIp, $companyId, $errors);
                     break;
@@ -176,6 +176,8 @@ class SyncTerminals extends Command
                 'error_message' => implode(",", $errors)
             ]
         ]);
+
+        app('sentry')->captureMessage(implode(",", $errors));
 
         if ($response->getStatusCode() === 200) {
             $responseCollection = collect(json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR));
