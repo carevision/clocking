@@ -55,6 +55,7 @@ RUN groupadd --force -g $WWWGROUP sail
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 
 COPY . /var/www/html
+RUN touch /var/www/html/database/db/
 COPY start-container /usr/local/bin/start-container
 COPY schedule.sh /usr/local/bin/start
 RUN chmod u+x /usr/local/bin/start

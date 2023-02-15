@@ -3,13 +3,10 @@
 # Working Directory
 cd /var/www/html;
 # Git related stuff
-
 git add .
 git stash
-
 # Update the remote URL to use HTTPS
 git remote set-url origin https://github.com/carevision/clocking.git
-
 # Update the known_hosts file
 mkdir -p ~/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 git pull --ff-only

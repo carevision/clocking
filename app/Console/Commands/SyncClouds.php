@@ -42,7 +42,7 @@ class SyncClouds extends Command
         foreach ($terminals as $terminal) {
             $deviceIp = $terminal->device_ip;
             $companyId = $terminal->company_id;
-            $endpoint = $terminal->api_url;
+            $endpoint = $terminal->api_url.'storeClocking';
             $serialNumber = $terminal->serial_number;
 
             if(empty($serialNumber)){
@@ -148,10 +148,12 @@ class SyncClouds extends Command
                     Log::error($e->getMessage());
                     $this->info("exception Occurred : ...........");
                     $this->info($e->getMessage());
+                    app('sentry')->captureException($e);
                 } catch (JsonException $e) {
                     $this->info("exception Occurred : ...........");
                     $this->info($e->getMessage());
                     Log::error($e->getMessage());
+                    app('sentry')->captureException($e);
                 }
             }
 
