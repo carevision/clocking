@@ -42,7 +42,7 @@ class SyncClouds extends Command
         foreach ($terminals as $terminal) {
             $deviceIp = $terminal->device_ip;
             $companyId = $terminal->company_id;
-            $endpoint = $terminal->api_url.'storeClocking';
+            $endpoint = !empty(config("server.url_sync")) ? config("server.url_sync") : $terminal->api_url.'storeClocking';
             $serialNumber = $terminal->serial_number;
 
             if(empty($serialNumber)){
