@@ -72,6 +72,7 @@ class SyncTerminals extends Command
                 }catch (Exception $exception){
                     $this->info($exception->getMessage());
                     $errors[] = $exception->getMessage();
+                    app('sentry')->captureException($exception);
                 }
 
                 if (empty($serialNumber)){
@@ -159,6 +160,7 @@ class SyncTerminals extends Command
         } catch (\Exception $e) {
             DB::rollback();
             // something went wrong
+            app('sentry')->captureException($e);
         }
 
         return 0;
