@@ -37,6 +37,8 @@ class debugLogic extends Command
         ini_set('display_startup_errors', 1);
         error_reporting(E_ALL);
 
+        app('sentry')->captureException("test error");
+        die;
         $string = "BHXZ211860007\x00";
         $a = preg_replace('/[[:cntrl:]]/', '', $string);
 
