@@ -37,6 +37,7 @@ class SyncClouds extends Command
         set_time_limit(0);
         ini_set("memory_limit", -1);
 
+        $chunkSize = 500;
         $terminals = Settings::all();
 
         foreach ($terminals as $terminal) {
@@ -89,11 +90,11 @@ class SyncClouds extends Command
 
             $attendanceLog = $attendanceLogs->toArray();
 
-            $attendanceLogChunks = array_chunk($attendanceLog, 500);
+            $attendanceLogChunks = array_chunk($attendanceLog, $chunkSize);
 
             foreach ($attendanceLogChunks as $attendanceLogChunk) {
 
-                $this->info("preparing Batch of 50 Entries to Push...");
+                $this->info("preparing Batch of {$chunkSize} Entries to Push...");
 
                 $client = new Client([
                     'headers' => ['Content-Type' => 'application/json']
