@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\ClockingRecord;
 use App\Models\Settings;
+use App\Models\TerminalSyncHistory;
 use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
@@ -75,6 +76,7 @@ class SyncTerminals extends Command
                     app('sentry')->captureException($exception);
                 }
 
+
                 if (empty($serialNumber)){
                     $errors[] = "unable to connect to machine on this IP: ".$deviceIp.", company id:".$companyId;
                     $this->info("Machine must have a serial number fetched.");
@@ -98,8 +100,37 @@ class SyncTerminals extends Command
                 $users = $zk->getUser();
                 $attendances = $zk->getAttendance();
 
+                $lastSavedTerminalHistory = TerminalSyncHistory::query()->where('serial_number', $serialNumber)->orderBy('id', 'desc')->first();
+
+                $lastHistoryTerminalFound = 0;
+
+                if (!empty($lastSavedTerminalHistory)){
+                    $lastHistoryTerminalFound = 1;
+
+                    $last_uid = $lastSavedTerminalHistory->uid;
+                    $last_terminal_id = $lastSavedTerminalHistory->terminal_id;
+                    $last_state = $lastSavedTerminalHistory->state;
+                    $last_timestamp = $lastSavedTerminalHistory->timestamp;
+                    $last_type = $lastSavedTerminalHistory->type;
+                    $last_serial_number = $lastSavedTerminalHistory->serial_number;
+                }
+
+                $lastEntry = [];
                 foreach ($attendances as $attendance){
                     $attendance = collect($attendance);
+                    /**
+                     * Iterate and reach to the valid entry which needs to be created
+                     *
+                     */
+                    if ($lastHistoryTerminalFound === 1){
+                        if (($last_serial_number == $serialNumber) && ($last_timestamp >= $attendance->get('timestamp'))){
+//                            $this->info("skipping entry..");
+                            continue;
+                        }
+
+                    }
+
+//                    $this->info("found new entry..");
 
                     $clockIn = "";
                     $clockOut = "";
@@ -135,7 +166,85 @@ class SyncTerminals extends Command
                         "serial_number" => $serialNumber
                     ];
 
+                    /**
+                     * If clock in for this user exists skip the entry
+                     */
+                    if (!empty($clockIn)){
+                        $isClockOutExists = ClockingRecord::query()
+                            ->where('UID', $attendance->get('id'))
+                            ->where('clocking_in', $clockOut)
+                            ->where('serial_number', $serialNumber)
+                            ->first();
+
+                        if (!empty($isClockOutExists)){
+                            continue;
+                        }
+                    }
+
+                    /**
+                     * If clock out for this user exists skip the entry
+                     */
+                    if (!empty($clockOut)){
+                        $isClockOutExists = ClockingRecord::query()
+                            ->where('UID', $attendance->get('id'))
+                            ->where('clocking_out', $clockIn)
+                            ->where('serial_number', $serialNumber)
+                            ->first();
+
+                        if (!empty($isClockOutExists)){
+                            continue;
+                        }
+                    }
+
+                    /**
+                     * If break out for this user exists skip the entry
+                     */
+                    if (!empty($breakOut)){
+                        $isBreakOutExists = ClockingRecord::query()
+                            ->where('UID', $attendance->get('id'))
+                            ->where('break_out', $breakOut)
+                            ->where('serial_number', $serialNumber)
+                            ->first();
+
+                        if (!empty($isBreakOutExists)){
+                            continue;
+                        }
+                    }
+
+                    /**
+                     * If break in for this user exists skip the entry
+                     */
+                    if (!empty($breakIn)){
+                        $isBreakInExists = ClockingRecord::query()
+                            ->where('UID', $attendance->get('id'))
+                            ->where('break_out', $breakIn)
+                            ->where('serial_number', $serialNumber)
+                            ->first();
+
+                        if (!empty($isBreakInExists)){
+                            continue;
+                        }
+                    }
+
+                    /**
+                     * If cursor reached here that mean it needs to be created and not skipped
+                     */
+
                     ClockingRecord::query()->create($storeAttendance);
+                    $lastEntry = $attendance;
+                }
+
+                if (!empty($storeAttendance)){
+                    $storeSyncTerminal = [
+                        'uid' => $lastEntry->get('id'),
+                        'terminal_id' => $lastEntry->get('uid'),
+                        'state' => $lastEntry->get('state'),
+                        'timestamp' => $lastEntry->get('timestamp'),
+                        'type' => $lastEntry->get('type'),
+                        'serial_number' => $serialNumber
+                    ];
+
+                    TerminalSyncHistory::query()->create($storeSyncTerminal);
                 }
 
                 /**

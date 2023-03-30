@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Attendance;
+use App\Models\ClockingRecord;
 use App\Models\Settings;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
@@ -37,8 +38,10 @@ class debugLogic extends Command
         ini_set('display_startup_errors', 1);
         error_reporting(E_ALL);
 
-        app('sentry')->captureMessage("test error");
-        die;
+        $clockingLastEntry = ClockingRecord::last();
+        dd($clockingLastEntry);
+
+
         $string = "BHXZ211860007\x00";
         $a = preg_replace('/[[:cntrl:]]/', '', $string);
 
