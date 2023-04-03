@@ -89,11 +89,11 @@ class SyncClouds extends Command
 
             $attendanceLog = $attendanceLogs->toArray();
 
-            $attendanceLogChunks = array_chunk($attendanceLog, 50);
+            $attendanceLogChunks = array_chunk($attendanceLog, 500);
 
             foreach ($attendanceLogChunks as $attendanceLogChunk) {
 
-                $this->info("preparing Batch of 50 Entries to Push...");
+                $this->info("preparing Batch of 500 Entries to Push...");
 
                 $client = new Client([
                     'headers' => ['Content-Type' => 'application/json']
