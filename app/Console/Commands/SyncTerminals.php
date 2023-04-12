@@ -188,22 +188,22 @@ class SyncTerminals extends Command
                     /**
                      * If clock in for this user exists skip the entry
                      */
-                    if (!empty($clockIn)){
-                        $isClockOutExists = ClockingRecord::query()
+                    /*if (!empty($clockIn)){
+                        $isClockInExists = ClockingRecord::query()
                             ->where('UID', $attendance->get('id'))
                             ->where('clocking_in', $clockIn)
                             ->where('serial_number', $serialNumber)
                             ->first();
 
-                        if (!empty($isClockOutExists)){
+                        if (!empty($isClockInExists)){
                             continue;
                         }
-                    }
+                    }*/
 
                     /**
                      * If clock out for this user exists skip the entry
                      */
-                    if (!empty($clockOut)){
+                    /*if (!empty($clockOut)){
                         $isClockOutExists = ClockingRecord::query()
                             ->where('UID', $attendance->get('id'))
                             ->where('clocking_out', $clockOut)
@@ -213,12 +213,12 @@ class SyncTerminals extends Command
                         if (!empty($isClockOutExists)){
                             continue;
                         }
-                    }
+                    }*/
 
                     /**
                      * If break out for this user exists skip the entry
                      */
-                    if (!empty($breakOut)){
+                    /*if (!empty($breakOut)){
                         $isBreakOutExists = ClockingRecord::query()
                             ->where('UID', $attendance->get('id'))
                             ->where('break_out', $breakOut)
@@ -228,12 +228,12 @@ class SyncTerminals extends Command
                         if (!empty($isBreakOutExists)){
                             continue;
                         }
-                    }
+                    }*/
 
                     /**
                      * If break in for this user exists skip the entry
                      */
-                    if (!empty($breakIn)){
+                    /*if (!empty($breakIn)){
                         $isBreakInExists = ClockingRecord::query()
                             ->where('UID', $attendance->get('id'))
                             ->where('break_out', $breakIn)
@@ -243,7 +243,7 @@ class SyncTerminals extends Command
                         if (!empty($isBreakInExists)){
                             continue;
                         }
-                    }
+                    }*/
 
                     /**
                      * If cursor reached here that mean it needs to be created and not skipped
