@@ -100,7 +100,10 @@ class SyncTerminals extends Command
                 $users = $zk->getUser();
                 $attendances = $zk->getAttendance();
 
-                $lastSavedTerminalHistory = TerminalSyncHistory::query()->where('serial_number', $serialNumber)->orderBy('id', 'desc')->first();
+                $lastSavedTerminalHistory = TerminalSyncHistory::query()
+                    ->where('serial_number', $serialNumber)
+                    ->orderBy('id', 'desc')
+                    ->first();
 
                 $lastHistoryTerminalFound = 0;
 
@@ -123,11 +126,10 @@ class SyncTerminals extends Command
                      *
                      */
                     if ($lastHistoryTerminalFound === 1){
-                        if (($last_serial_number == $serialNumber) && ($last_timestamp >= $attendance->get('timestamp'))){
+                        if (($last_serial_number == $serialNumber) && (strtotime($last_timestamp) >= strtotime($attendance->get('timestamp')))){
 //                            $this->info("skipping entry..");
                             continue;
                         }
-
                     }
 
 //                    $this->info("found new entry..");
@@ -138,7 +140,24 @@ class SyncTerminals extends Command
                     $breakOut = "";
 
                     $type = (int) $attendance->get('type');
-                    switch ($type) {
+
+                    if ($type == 1){
+                        $clockOut = $attendance->get('timestamp');
+                    }
+
+                    if ($type == 2) {
+                        $breakOut = $attendance->get('timestamp');
+                    }
+
+                    if ($type == 3) {
+                        $breakIn = $attendance->get('timestamp');
+                    }
+
+                    if ($type == 0){
+                        $clockIn = $attendance->get('timestamp');
+                    }
+
+                    /*switch ($type) {
                         case 1:
                             $clockOut = $attendance->get('timestamp');
                             break;
@@ -152,7 +171,7 @@ class SyncTerminals extends Command
                         default:
                             $clockIn = $attendance->get('timestamp');
                             break;
-                    }
+                    }*/
 
                     $storeAttendance = [
                         "UID" => $attendance->get('id'),
@@ -172,7 +191,7 @@ class SyncTerminals extends Command
                     if (!empty($clockIn)){
                         $isClockOutExists = ClockingRecord::query()
                             ->where('UID', $attendance->get('id'))
-                            ->where('clocking_in', $clockOut)
+                            ->where('clocking_in', $clockIn)
                             ->where('serial_number', $serialNumber)
                             ->first();
 
@@ -187,7 +206,7 @@ class SyncTerminals extends Command
                     if (!empty($clockOut)){
                         $isClockOutExists = ClockingRecord::query()
                             ->where('UID', $attendance->get('id'))
-                            ->where('clocking_out', $clockIn)
+                            ->where('clocking_out', $clockOut)
                             ->where('serial_number', $serialNumber)
                             ->first();
 
