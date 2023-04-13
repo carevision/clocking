@@ -93,7 +93,7 @@ class SyncClouds extends Command
 
             foreach ($attendanceLogChunks as $attendanceLogChunk) {
 
-                $this->info("preparing Batch of 500 Entries to Push...");
+                $this->info("preparing Batch of 50 Entries to Push...");
 
                 $client = new Client([
                     'headers' => ['Content-Type' => 'application/json']
