@@ -89,7 +89,7 @@ class SyncClouds extends Command
 
             $attendanceLog = $attendanceLogs->toArray();
 
-            $attendanceLogChunks = array_chunk($attendanceLog, 500);
+            $attendanceLogChunks = array_chunk($attendanceLog, 50);
 
             foreach ($attendanceLogChunks as $attendanceLogChunk) {
 
@@ -142,7 +142,7 @@ class SyncClouds extends Command
                     }
 
                     $this->info(" Sleeping Cron service ...");
-                    sleep(5);
+                    sleep(20);
 
                 } catch (GuzzleException $e) {
                     Log::error($e->getMessage());
