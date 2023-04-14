@@ -61,7 +61,7 @@ class SyncClouds extends Command
                 $attendanceLogs = ClockingRecord::all();
             } else {
                 if ($companyId == 3){
-                    $lastSync = date("Y-m-d H:i:s", strtotime("2023-01-01 00:00:01"));
+                    $lastSync = date("Y-m-d H:i:s", strtotime("2023-04-01 00:00:01"));
                 }else{
                     $lastSync = date("Y-m-d H:i:s", strtotime($syncHistory->date));
                 }
@@ -147,7 +147,7 @@ class SyncClouds extends Command
                     }
 
                     $this->info(" Sleeping Cron service ...");
-                    sleep(20);
+                    sleep(5);
 
                 } catch (GuzzleException $e) {
                     Log::error($e->getMessage());
