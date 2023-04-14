@@ -60,12 +60,7 @@ class SyncClouds extends Command
             if (is_null($syncHistory)) {
                 $attendanceLogs = ClockingRecord::all();
             } else {
-                if ($companyId == 3){
-                    $lastSync = date("Y-m-d H:i:s", strtotime("2023-04-01 00:00:01"));
-                }else{
-                    $lastSync = date("Y-m-d H:i:s", strtotime($syncHistory->date));
-                }
-
+                $lastSync = date("Y-m-d H:i:s", strtotime($syncHistory->date));
 
                 $this->info("Last Sync Time was: ".$lastSync);
 
