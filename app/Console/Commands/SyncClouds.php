@@ -142,7 +142,7 @@ class SyncClouds extends Command
                     }
 
                     $this->info(" Sleeping Cron service ...");
-                    sleep(5);
+                    sleep(15);
 
                 } catch (GuzzleException $e) {
                     Log::error($e->getMessage());
