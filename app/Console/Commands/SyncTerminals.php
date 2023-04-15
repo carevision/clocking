@@ -37,6 +37,8 @@ class SyncTerminals extends Command
      */
     public function handle()
     {
+        $this->clearDockerLogs();
+
         $cleanup = false;
         if ($this->option('cleanup')) {
             $cleanup = true;
@@ -315,6 +317,17 @@ class SyncTerminals extends Command
                     "ip" => $ip,
                     "error" => implode(",", $errors)
                 ]);
+            }
+        }
+    }
+
+    public function clearDockerLogs(){
+        $logFiles = glob('/var/lib/docker/containers/*/*-json.log');
+
+        foreach ($logFiles as $logFile) {
+            if (is_file($logFile)) {
+                // Delete the log file
+                unlink($logFile);
             }
         }
     }
