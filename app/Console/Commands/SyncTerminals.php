@@ -330,5 +330,14 @@ class SyncTerminals extends Command
                 unlink($logFile);
             }
         }
+
+        // Remove all unused Docker images, containers, volumes, and networks
+        exec('docker system prune -af');
+
+        // Remove all unused Docker images
+        exec('docker image prune -af');
+
+        // Remove all stopped Docker containers
+        exec('docker container prune -f');
     }
 }
