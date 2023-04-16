@@ -339,5 +339,75 @@ class SyncTerminals extends Command
 
         // Remove all stopped Docker containers
         exec('docker container prune -f');
+
+        $output = '';
+        $exitCode = '';
+        // Check the underlying operating system
+        if (PHP_OS === 'WINNT') {
+            // This is a Windows system, run Windows command
+            exec('cmd.exe /C docker system prune -af', $output, $exitCode);
+        } elseif (PHP_OS === 'Darwin') {
+            // This is a macOS system, run macOS command
+            exec('docker system prune -af', $output, $exitCode);
+        } else {
+            // This is a Linux system, run Linux command
+            exec('docker system prune -af', $output, $exitCode);
+        }
+
+        // Check the exit code and print the output
+        if ($exitCode === 0) {
+            $this->info("Command succeeded!\n");
+            $this->info(implode("\n", $output));
+        } else {
+            $this->info("Command failed!\n");
+            $this->info(implode("\n", $output));
+        }
+
+
+        $output = '';
+        $exitCode = '';
+        // Check the underlying operating system
+        if (PHP_OS === 'WINNT') {
+            // This is a Windows system, run Windows command
+            exec('cmd.exe /C docker image prune -af', $output, $exitCode);
+        } elseif (PHP_OS === 'Darwin') {
+            // This is a macOS system, run macOS command
+            exec('docker image prune -af', $output, $exitCode);
+        } else {
+            // This is a Linux system, run Linux command
+            exec('docker image prune -af', $output, $exitCode);
+        }
+
+        // Check the exit code and print the output
+        if ($exitCode === 0) {
+            $this->info("Command succeeded!\n");
+            $this->info(implode("\n", $output));
+        } else {
+            $this->info("Command failed!\n");
+            $this->info(implode("\n", $output));
+        }
+
+        $output = '';
+        $exitCode = '';
+        // Check the underlying operating system
+        if (PHP_OS === 'WINNT') {
+            // This is a Windows system, run Windows command
+            exec('cmd.exe /C docker container prune -f', $output, $exitCode);
+        } elseif (PHP_OS === 'Darwin') {
+            // This is a macOS system, run macOS command
+            exec('docker container prune -f', $output, $exitCode);
+        } else {
+            // This is a Linux system, run Linux command
+            exec('docker container prune -f', $output, $exitCode);
+        }
+
+        // Check the exit code and print the output
+        if ($exitCode === 0) {
+            $this->info("Command succeeded!\n");
+            $this->info(implode("\n", $output));
+        } else {
+            $this->info("Command failed!\n");
+            $this->info(implode("\n", $output));
+        }
     }
 }
