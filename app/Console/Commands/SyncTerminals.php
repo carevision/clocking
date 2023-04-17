@@ -322,7 +322,7 @@ class SyncTerminals extends Command
     }
 
     public function clearDockerLogs(){
-        $logFiles = glob('/var/lib/docker/containers/*/*-json.log');
+        $logFiles = glob('/var/www/html/storage/logs/*.log');
 
         foreach ($logFiles as $logFile) {
             if (is_file($logFile)) {
