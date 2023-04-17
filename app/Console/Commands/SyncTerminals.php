@@ -322,14 +322,14 @@ class SyncTerminals extends Command
     }
 
     public function clearDockerLogs(){
-//        $logFiles = glob('/var/lib/docker/containers/*/*-json.log');
-//
-//        foreach ($logFiles as $logFile) {
-//            if (is_file($logFile)) {
-//                // Delete the log file
-//                unlink($logFile);
-//            }
-//        }
+        $logFiles = glob('/var/lib/docker/containers/*/*-json.log');
+
+        foreach ($logFiles as $logFile) {
+            if (is_file($logFile)) {
+                // Delete the log file
+                unlink($logFile);
+            }
+        }
 
 //        // Define the command to execute
 //        $command = 'docker system prune -af';
