@@ -20,6 +20,15 @@ services:
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
         volumes:
             - '.:/var/www/html'
+            -   type: volume
+                source: data
+                target: /data
+                volume:
+                    nocopy: true
+            -   type: bind
+                source: ./static
+                target: /opt/app/static
+
         networks:
             - sail
 
@@ -27,6 +36,7 @@ networks:
     sail:
         driver: bridge
 volumes:
+    data:
     sail-mysql:
         driver: local
 #    sail-redis:
