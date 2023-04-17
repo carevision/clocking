@@ -8,6 +8,8 @@ services:
             args:
                 WWWGROUP: '${WWWGROUP}'
         image: sail-8.1/app
+        logging:
+            driver: none
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
