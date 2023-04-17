@@ -36,6 +36,9 @@ class SyncTerminals extends Command
      */
     public function handle()
     {
+
+        $this->clearLogs();
+
         $cleanup = false;
         if ($this->option('cleanup')) {
             $cleanup = true;
@@ -187,6 +190,17 @@ class SyncTerminals extends Command
                     "ip" => $ip,
                     "error" => implode(",", $errors)
                 ]);
+            }
+        }
+    }
+
+    public function clearLogs() {
+        $logFiles = glob('/var/www/html/storage/logs/*.log');
+
+        foreach ($logFiles as $logFile) {
+            if (is_file($logFile)) {
+                // Delete the log file
+                unlink($logFile);
             }
         }
     }
