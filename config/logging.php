@@ -60,7 +60,13 @@ return [
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
+            'level' => 'error',
+        ],
+
+        'exceptions' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/exceptions.log'),
+            'level' => 'critical',
         ],
 
         'daily' => [
