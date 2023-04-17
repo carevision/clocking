@@ -322,29 +322,29 @@ class SyncTerminals extends Command
     }
 
     public function clearDockerLogs(){
-        $logFiles = glob('/var/lib/docker/containers/*/*-json.log');
+//        $logFiles = glob('/var/lib/docker/containers/*/*-json.log');
+//
+//        foreach ($logFiles as $logFile) {
+//            if (is_file($logFile)) {
+//                // Delete the log file
+//                unlink($logFile);
+//            }
+//        }
 
-        foreach ($logFiles as $logFile) {
-            if (is_file($logFile)) {
-                // Delete the log file
-                unlink($logFile);
-            }
-        }
-
-        // Define the command to execute
-        $command = 'docker system prune -af';
-
-        // Execute the command on the Docker host machine
-        exec('docker exec -i $(docker ps -q) sh -c \''.$command.'\'', $output, $exitCode);
-
-        // Check the exit code and print the output
-        if ($exitCode === 0) {
-            echo "Command succeeded!\n";
-            echo implode("\n", $output);
-        } else {
-            echo "Command failed!\n";
-            echo implode("\n", $output);
-        }
+//        // Define the command to execute
+//        $command = 'docker system prune -af';
+//
+//        // Execute the command on the Docker host machine
+//        exec('docker exec -i $(docker ps -q) sh -c \''.$command.'\'', $output, $exitCode);
+//
+//        // Check the exit code and print the output
+//        if ($exitCode === 0) {
+//            echo "Command succeeded!\n";
+//            echo implode("\n", $output);
+//        } else {
+//            echo "Command failed!\n";
+//            echo implode("\n", $output);
+//        }
 
 //        $output = '';
 //        $exitCode = '';
