@@ -296,8 +296,8 @@ class SyncTerminals extends Command
         return 0;
     }
 
-    private function reportToServerOnFailure($ip, $company_id, $errors) {
-        $client = new Client();
+    private function reportToServerOnFailure($ip='', $company_id='', $errors=[]) {
+        /*$client = new Client();
         $endPointUrl = config('server.url');
         $response = $client->request('POST', $endPointUrl.'clocking/error/log', [
             'form_params' => [
@@ -305,11 +305,11 @@ class SyncTerminals extends Command
                 'company_id' => $company_id,
                 'error_message' => implode(",", $errors)
             ]
-        ]);
+        ]);*/
 
         app('sentry')->captureMessage(implode(",", $errors));
 
-        if ($response->getStatusCode() === 200) {
+        /*if ($response->getStatusCode() === 200) {
             $responseCollection = collect(json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR));
 
             if (!empty($responseCollection->get('status')) && $responseCollection->get('status') == "success") {
@@ -318,7 +318,7 @@ class SyncTerminals extends Command
                     "error" => implode(",", $errors)
                 ]);
             }
-        }
+        }*/
     }
 
     public function clearDockerLogs(){
