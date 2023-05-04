@@ -102,6 +102,11 @@ class SyncTerminals extends Command
                 $users = $zk->getUser();
                 $attendances = $zk->getAttendance();
 
+                foreach ($attendances as &$refAttendance) {
+                    $decimalInt = hexdec($refAttendance["id"]);
+                    $refAttendance["id"] = ltrim((string) $decimalInt, '0');
+                }
+
                 $lastSavedTerminalHistory = TerminalSyncHistory::query()
                     ->where('serial_number', $serialNumber)
                     ->orderBy('id', 'desc')
