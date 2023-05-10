@@ -130,13 +130,12 @@ class SyncTerminals extends Command
 
                 $lastEntry = [];
                 foreach ($attendances as $attendance){
-                    $attendance = collect($attendance);
                     /**
                      * Iterate and reach to the valid entry which needs to be created
                      *
                      */
                     if ($lastHistoryTerminalFound === 1){
-                        if (($last_serial_number == $serialNumber) && (strtotime($last_timestamp) >= strtotime($attendance->get('timestamp')))){
+                        if (($last_serial_number == $serialNumber) && (strtotime($last_timestamp) >= strtotime($attendance['timestamp']))){
 //                            $this->info("skipping entry..");
                             continue;
                         }
@@ -149,53 +148,36 @@ class SyncTerminals extends Command
                     $breakIn = "";
                     $breakOut = "";
 
-                    $type = (int) $attendance->get('type');
+                    $type = $attendance['type'];
 
                     if ($type == 1){
-                        $clockOut = $attendance->get('timestamp');
+                        $clockOut = $attendance['timestamp'];
                     }
 
                     if ($type == 2) {
-                        $breakOut = $attendance->get('timestamp');
+                        $breakOut = $attendance['timestamp'];
                     }
 
                     if ($type == 3) {
-                        $breakIn = $attendance->get('timestamp');
+                        $breakIn = $attendance['timestamp'];
                     }
 
                     if ($type == 0){
-                        $clockIn = $attendance->get('timestamp');
+                        $clockIn = $attendance['timestamp'];
                     }
 
-                    /*switch ($type) {
-                        case 1:
-                            $clockOut = $attendance->get('timestamp');
-                            break;
-                        case 2:
-                            $breakOut = $attendance->get('timestamp');
-                            break;
-                        case 3:
-                            $breakIn = $attendance->get('timestamp');
-                            break;
 
-                        default:
-                            $clockIn = $attendance->get('timestamp');
-                            break;
-                    }*/
-
-                    $cleanId = hexdec($attendance->get('id'));
-                    $attendanceId = (int) ltrim((string) $cleanId, '0');
-
-                    $userDetails = $usersCollection->firstWhere("userid", $attendanceId);
+                    //$cleanId = hexdec($attendance->get('id'));
+                    //$attendanceId = (int) ltrim((string) $cleanId, '0');
 
                     $storeAttendance = [
-                        "UID" => $attendanceId,
-                        "name" => $userDetails['name'] ?? $attendanceId,
+                        "UID" => $attendance['id'],
+                        "name" => $users[$attendance['id']] ?? $attendance['id'],
                         "clocking_in" => $clockIn,
                         "clocking_out" => $clockOut,
                         "break_in" => $breakIn,
                         "break_out" => $breakOut,
-                        "status" => $attendance->get('type'),
+                        "status" => $type,
                         "company_id" => $companyId,
                         "serial_number" => $serialNumber,
                         'raw_data' => json_encode($attendance)
@@ -212,11 +194,11 @@ class SyncTerminals extends Command
 
                 if (!empty($storeAttendance)){
                     $storeSyncTerminal = [
-                        'uid' => $lastEntry->get('id'),
-                        'terminal_id' => $lastEntry->get('uid'),
-                        'state' => $lastEntry->get('state'),
-                        'timestamp' => $lastEntry->get('timestamp'),
-                        'type' => $lastEntry->get('type'),
+                        'uid' => $lastEntry['id'],
+                        'terminal_id' => $lastEntry['uid'],
+                        'state' => $lastEntry['state'],
+                        'timestamp' => $lastEntry['timestamp'],
+                        'type' => $lastEntry['type'],
                         'serial_number' => $serialNumber
                     ];
 
