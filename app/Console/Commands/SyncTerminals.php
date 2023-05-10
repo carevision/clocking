@@ -188,21 +188,18 @@ class SyncTerminals extends Command
 
                     $userDetails = $usersCollection->firstWhere("userid", $attendanceId);
 
-                    if (!empty($userDetails)){
-                        $storeAttendance = [
-                            "UID" => $attendanceId,
-                            "name" => $userDetails['name'] ?? $attendanceId,
-                            "clocking_in" => $clockIn,
-                            "clocking_out" => $clockOut,
-                            "break_in" => $breakIn,
-                            "break_out" => $breakOut,
-                            "status" => $attendance->get('type'),
-                            "company_id" => $companyId,
-                            "serial_number" => $serialNumber
-                        ];
-                    }else{
-                        continue;
-                    }
+                    $storeAttendance = [
+                        "UID" => $attendanceId,
+                        "name" => $userDetails['name'] ?? $attendanceId,
+                        "clocking_in" => $clockIn,
+                        "clocking_out" => $clockOut,
+                        "break_in" => $breakIn,
+                        "break_out" => $breakOut,
+                        "status" => $attendance->get('type'),
+                        "company_id" => $companyId,
+                        "serial_number" => $serialNumber,
+                        'raw_data' => json_encode($attendance)
+                    ];
 
                     /**
                      * If cursor reached here that mean it needs to be created and not skipped

@@ -26,6 +26,7 @@ class ClockingRecord extends Model
         'break_out',
         'status',
         'company_id',
-        'serial_number'
+        'serial_number',
+        'raw_data'
     ];
 }
