@@ -47,6 +47,9 @@ class SyncTerminals extends Command
 
         set_time_limit(0);
         ini_set("memory_limit", -1);
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
 
         $terminals = Settings::all();
 
@@ -64,20 +67,22 @@ class SyncTerminals extends Command
                 $this->info("device ip : {$deviceIp}");
 
                 $serialNumber = null;
-                $zk = new ZKTeco($deviceIp);
+                $zk = new ZKTeco($deviceIp, 4370, 20);
+
                 try {
+
                     if($zk->connect()){
                         $zk->disableDevice();
                         $serialNumber = stripslashes($zk->serialNumber());
                         $serialNumber = Settings::getCleanSerialNumber($serialNumber);
                         $zk->enableDevice();
                     }
+
                 }catch (Exception $exception){
                     $this->info($exception->getMessage());
                     $errors[] = $exception->getMessage();
                     app('sentry')->captureException($exception);
                 }
-
 
                 if (empty($serialNumber)){
                     $errors[] = "unable to connect to machine on this IP: ".$deviceIp.", company id:".$companyId;
@@ -100,12 +105,9 @@ class SyncTerminals extends Command
                  */
 
                 $users = $zk->getUser();
-                $attendances = $zk->getAttendance();
+                $usersCollection = collect($users);
 
-                /*foreach ($attendances as &$refAttendance) {
-                    $decimalInt = hexdec($refAttendance["id"]);
-                    $refAttendance["id"] = ltrim((string) $decimalInt, '0');
-                }*/
+                $attendances = $zk->getAttendance();
 
                 $lastSavedTerminalHistory = TerminalSyncHistory::query()
                     ->where('serial_number', $serialNumber)
@@ -124,6 +126,7 @@ class SyncTerminals extends Command
                     $last_type = $lastSavedTerminalHistory->type;
                     $last_serial_number = $lastSavedTerminalHistory->serial_number;
                 }
+
 
                 $lastEntry = [];
                 foreach ($attendances as $attendance){
@@ -180,77 +183,26 @@ class SyncTerminals extends Command
                             break;
                     }*/
 
-                    $storeAttendance = [
-                        "UID" => $attendance->get('id'),
-                        "name" => !empty($users[$attendance->get('id')]['name']) ? $users[$attendance->get('id')]['name'] : NULL,
-                        "clocking_in" => $clockIn,
-                        "clocking_out" => $clockOut,
-                        "break_in" => $breakIn,
-                        "break_out" => $breakOut,
-                        "status" => $attendance->get('type'),
-                        "company_id" => $companyId,
-                        "serial_number" => $serialNumber
-                    ];
+                    $cleanId = hexdec($attendance->get('id'));
+                    $attendanceId = (int) ltrim((string) $cleanId, '0');
 
-                    /**
-                     * If clock in for this user exists skip the entry
-                     */
-                    /*if (!empty($clockIn)){
-                        $isClockInExists = ClockingRecord::query()
-                            ->where('UID', $attendance->get('id'))
-                            ->where('clocking_in', $clockIn)
-                            ->where('serial_number', $serialNumber)
-                            ->first();
+                    $userDetails = $usersCollection->firstWhere("userid", $attendanceId);
 
-                        if (!empty($isClockInExists)){
-                            continue;
-                        }
-                    }*/
-
-                    /**
-                     * If clock out for this user exists skip the entry
-                     */
-                    /*if (!empty($clockOut)){
-                        $isClockOutExists = ClockingRecord::query()
-                            ->where('UID', $attendance->get('id'))
-                            ->where('clocking_out', $clockOut)
-                            ->where('serial_number', $serialNumber)
-                            ->first();
-
-                        if (!empty($isClockOutExists)){
-                            continue;
-                        }
-                    }*/
-
-                    /**
-                     * If break out for this user exists skip the entry
-                     */
-                    /*if (!empty($breakOut)){
-                        $isBreakOutExists = ClockingRecord::query()
-                            ->where('UID', $attendance->get('id'))
-                            ->where('break_out', $breakOut)
-                            ->where('serial_number', $serialNumber)
-                            ->first();
-
-                        if (!empty($isBreakOutExists)){
-                            continue;
-                        }
-                    }*/
-
-                    /**
-                     * If break in for this user exists skip the entry
-                     */
-                    /*if (!empty($breakIn)){
-                        $isBreakInExists = ClockingRecord::query()
-                            ->where('UID', $attendance->get('id'))
-                            ->where('break_out', $breakIn)
-                            ->where('serial_number', $serialNumber)
-                            ->first();
-
-                        if (!empty($isBreakInExists)){
-                            continue;
-                        }
-                    }*/
+                    if (!empty($userDetails)){
+                        $storeAttendance = [
+                            "UID" => $attendanceId,
+                            "name" => $userDetails['name'] ?? $attendanceId,
+                            "clocking_in" => $clockIn,
+                            "clocking_out" => $clockOut,
+                            "break_in" => $breakIn,
+                            "break_out" => $breakOut,
+                            "status" => $attendance->get('type'),
+                            "company_id" => $companyId,
+                            "serial_number" => $serialNumber
+                        ];
+                    }else{
+                        continue;
+                    }
 
                     /**
                      * If cursor reached here that mean it needs to be created and not skipped
@@ -258,6 +210,7 @@ class SyncTerminals extends Command
 
                     ClockingRecord::query()->create($storeAttendance);
                     $lastEntry = $attendance;
+                    //$lastEntry->id = $cleanId;
                 }
 
                 if (!empty($storeAttendance)){
