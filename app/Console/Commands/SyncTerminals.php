@@ -172,7 +172,7 @@ class SyncTerminals extends Command
 
                     $storeAttendance = [
                         "UID" => $attendance['id'],
-                        "name" => $users[$attendance['id']] ?? $attendance['id'],
+                        "name" => $users[$attendance['id']]['name'] ?? $attendance['id'],
                         "clocking_in" => $clockIn,
                         "clocking_out" => $clockOut,
                         "break_in" => $breakIn,
