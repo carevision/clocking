@@ -166,6 +166,11 @@ class SyncTerminals extends Command
                         $clockIn = $attendance['timestamp'];
                     }
 
+                    if ($type == 255){
+                        $errors[] = "Wrong Punch State, ->>> user: ".$attendance['id'].", company id: ".$companyId.", punch state: 255";
+                        app('sentry')->captureMessage(implode(",", $errors));
+                    }
+
 
                     //$cleanId = hexdec($attendance->get('id'));
                     //$attendanceId = (int) ltrim((string) $cleanId, '0');
