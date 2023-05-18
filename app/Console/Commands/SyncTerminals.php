@@ -166,8 +166,8 @@ class SyncTerminals extends Command
                         $clockIn = $attendance['timestamp'];
                     }
 
-                    if ($type == 255){
-                        $errors[] = "Wrong Punch State, ->>> user: ".$attendance['id'].", company id: ".$companyId.", punch state: 255";
+                    if (!in_array($type, [0,1,2,3])){
+                        $errors[] = "Wrong Punch State, ->>> user: ".$attendance['id'].", company id: ".$companyId.", punch state: ".$type;
                         app('sentry')->captureMessage(implode(",", $errors));
                     }
 
