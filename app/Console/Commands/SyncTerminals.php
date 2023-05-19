@@ -171,10 +171,10 @@ class SyncTerminals extends Command
                         app('sentry')->captureMessage(implode(",", $errors));
                     }
 
-                    if ($type == 255){
+                    /*if ($type == 255){
                         $clockIn = $attendance['timestamp'];
                         $type = 0;
-                    }
+                    }*/
 
 
                     //$cleanId = hexdec($attendance->get('id'));
