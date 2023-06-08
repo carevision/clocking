@@ -65,6 +65,7 @@ class LoginController extends Controller
             $client = new Client();
             $loginUrl = config('server.login_url');
             $response = $client->request('POST', $loginUrl, [
+                'verify' => false, // Disable SSL verification
                 'form_params' => [
                     'userName' => $validated['username'],
                     'password' => $validated['password'],

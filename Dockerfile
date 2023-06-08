@@ -49,11 +49,17 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN apk update && \
-    apk add --no-cache curl tar gzip && \
+RUN apt-get update && \
+    apt-get add --no-cache curl tar gzip && \
     curl -fsSL https://get.docker.com -o get-docker.sh && \
     sh get-docker.sh && \
-    rm get-docker.sh \
+    rm get-docker.sh
+    
+# Install the ca-certificates package
+RUN apt-get update && apt-get install -y ca-certificates
+
+# Update the CA certificates
+RUN update-ca-certificates
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.1
 

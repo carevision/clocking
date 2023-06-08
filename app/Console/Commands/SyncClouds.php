@@ -103,7 +103,8 @@ class SyncClouds extends Command
                 $this->info("preparing Batch of 50 Entries to Push...");
 
                 $client = new Client([
-                    'headers' => ['Content-Type' => 'application/json']
+                    'headers' => ['Content-Type' => 'application/json'],
+                    'verify' => false,//bypass certificate validation
                 ]);
 
                 try {
