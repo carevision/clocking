@@ -53,6 +53,7 @@ class debugLogic extends Command
                 $zk->disableDevice();
                 $serialNumber = stripslashes($zk->serialNumber());
                 $serialNumber = Settings::getCleanSerialNumber($serialNumber);
+                $users = $zk->getUser();
                 $zk->enableDevice();
             }
 
@@ -60,7 +61,7 @@ class debugLogic extends Command
             $this->info($exception->getMessage());
             $errors[] = $exception->getMessage();
         }
-        dd($errors, $zk);
+        dd($errors, $zk, $serialNumber, $users);
 
 
         $string = "BHXZ211860007\x00";
