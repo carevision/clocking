@@ -48,7 +48,7 @@ class debugLogic extends Command
         $errors = [];
 
         try {
-
+            $users = [];
             if($zk->connect()){
                 $zk->disableDevice();
                 $serialNumber = stripslashes($zk->serialNumber());
