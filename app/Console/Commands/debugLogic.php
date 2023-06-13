@@ -34,12 +34,32 @@ class debugLogic extends Command
      */
     public function handle()
     {
+        set_time_limit(0);
+        ini_set("memory_limit", -1);
         ini_set('display_errors', 1);
         ini_set('display_startup_errors', 1);
         error_reporting(E_ALL);
 
-        $clockingLastEntry = ClockingRecord::last();
-        dd($clockingLastEntry);
+
+
+        $deviceIp = '172.16.7.18';
+        $serialNumber = null;
+        $zk = new ZKTeco($deviceIp, 4370, 20);
+
+        try {
+
+            if($zk->connect()){
+                $zk->disableDevice();
+                $serialNumber = stripslashes($zk->serialNumber());
+                $serialNumber = Settings::getCleanSerialNumber($serialNumber);
+                $zk->enableDevice();
+            }
+
+        }catch (Exception $exception){
+            $this->info($exception->getMessage());
+            $errors[] = $exception->getMessage();
+        }
+        dd($errors, $zk);
 
 
         $string = "BHXZ211860007\x00";
