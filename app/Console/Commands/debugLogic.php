@@ -45,6 +45,7 @@ class debugLogic extends Command
         $deviceIp = '172.16.7.18';
         $serialNumber = null;
         $zk = new ZKTeco($deviceIp, 4370, 20);
+        $errors = [];
 
         try {
 
